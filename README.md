@@ -1,4 +1,4 @@
-# AlgorithmenUndDatenstrukturen
+# Algorithmen und Datenstrukturen
 
 Zusatzmaterial zur Vorlesung *Algorithmen und Datenstrukturen* an der FOM Düsseldort im Sommersemester 2018 
 
