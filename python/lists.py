@@ -46,20 +46,25 @@ class AbstractLinearList(ABC):
   @abstractmethod
   def insertafter(self, node, value):
       ''' insert new value after node
-       
       '''
       pass
   
   @abstractmethod
   def deletenext(self, node):
+      ''' delete next node
+      '''
       pass
 
   @abstractmethod
   def search(self, node, value):
+      ''' search for value starting at node
+      '''
       pass
 
   @abstractmethod
   def isempty(self):
+      ''' is list empty?
+      '''
       pass
   
 # -----------------------------------------------------------------------
