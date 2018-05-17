@@ -112,13 +112,13 @@ class LinearList(AbstractLinearList):
           del(t)
       return v
       
-    def search(self, node, value):
+    def search(self, node, key):
         ''' search
            
            Suche mit Sentinaltechnik
         '''
-        self._tail._key = value
-        while (node._key != value):
+        self._tail._key = key
+        while (node._key != key):
             node = node._next
         return node
     
@@ -128,8 +128,8 @@ class LinearList(AbstractLinearList):
     def istail(self, node):
         return node._next == node
         
-    def isinlist(self, value):
-        node = self.search(self._head, value)
+    def isinlist(self, key):
+        node = self.search(self._head, key)
         return not self.istail(node)
  
 # -----------------------------------------------------------------------
@@ -137,15 +137,15 @@ class SortedLinearList(LinearList):
     ''' Implementiert eine sortierte linearen Liste
     '''
     
-    def search(self, node, value):
-        self._tail._key = value
-        while (node._next._key < value):
+    def search(self, node, key):
+        self._tail._key = key
+        while (node._next._key < key):
             node = node._next
         return node
     
-    def insert(self, value):
-        n = self.search(self._head, value)
-        self.insertafter(n, value)
+    def insert(self, key):
+        n = self.search(self._head, key)
+        self.insertafter(n, key)
 
 
 # -----------------------------------------------------------------------
@@ -153,8 +153,8 @@ class Stack(LinearList):
     ''' Implementiert einen Sack mit Hilfe einer linearen Liste
     '''
     
-    def push(self, value):
-        self.insertafter(self._head, value)
+    def push(self, key):
+        self.insertafter(self._head, key)
         
     def pop(self):
         return self.deletenext(self._head)
@@ -168,11 +168,11 @@ class Queue(LinearList):
     def get(self):
         return self.deletenext(self._head)
         
-    def put(self, value):
+    def put(self, key):
         t = self._head
         while (t._next != self._tail):
             t = t._next
-        self.insertafter(t, value)
+        self.insertafter(t, key)
  
  
 # -----------------------------------------------------------------------
@@ -205,23 +205,23 @@ class Ring(LinearList):
   def isempty(self):
     return self._head._next == self._head
 
-  def insert(self, value):
+  def insert(self, key):
     tail = self._head._next
     while tail._next != self._head._next:
         tail = tail._next
-    newnode = self.insertafter(tail, value)
+    newnode = self.insertafter(tail, key)
     if newnode._next == self._head:
         newnode._next = newnode
         
-  def searchnext(self, node, value):
-    while (node._next._key != value):
+  def searchnext(self, node, key):
+    while (node._next._key != key):
         node = node._next
         if node._next == self._head._next:
             break
     return node
 
-  def delete(self, value):
-      node = self.searchnext(self._head, value)
+  def delete(self, key):
+      node = self.searchnext(self._head, key)
       if node._next != self._head._next:
           self.deletenext(node)
 
