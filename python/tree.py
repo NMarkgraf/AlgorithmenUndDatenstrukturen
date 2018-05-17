@@ -224,5 +224,24 @@ def main():
 
   print("")
 
+def test():
+    from random import randint
+    
+    tree = Tree()
+    n = 1000
+    
+    list = [0] * n
+    for i in range(0, n):
+        list[i] = randint(0, n**2)
+        
+    for value in list:
+        tree.insert(value, str(value))
+
+    tree.inorderIterativ()
+    print("")
+    tree.inorderRecursiv(tree._head._right)
+    print("")
+
 if __name__ == "__main__":
     main()
+    # test()
