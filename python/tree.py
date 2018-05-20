@@ -134,38 +134,39 @@ class Tree:
         x = self.__search(key)
         return x if x is not self._sentinal else None
 
-    def preorderRecursiv(self, node):
-        """Recursive preorder traverse of a tree.
+    def preorderRecursive(self, node):
+        """Traverse the tree in preorder recursive.
 
         Preorder Traversierung des Baumes mittels Rekursion.
         """
         if node is not self._sentinal:
             self.printnode(node)
-            self.preorderRecursiv(node._left)
-            self.preorderRecursiv(node._right)
+            self.preorderRecursive(node._left)
+            self.preorderRecursive(node._right)
 
-    def inorderRecursiv(self, node):
-        """Recursive inorder traverse of the tree.
+    def inorderRecursive(self, node):
+        """Traverse the tree inorder recursive.
 
         Inorder Traversierung des Baumes mittels Rekursion.
         """
         if node is not self._sentinal:
-            self.inorderRecursiv(node._left)
+            self.inorderRecursive(node._left)
             self.printnode(node)
-            self.inorderRecursiv(node._right)
+            self.inorderRecursive(node._right)
 
-    def postorderRecursiv(self, node):
-        """Recursive postorder traverse of the tree.
+    def postorderRecursive(self, node):
+        """Traverse the tree postorder recursive.
 
         Postorder Traversierung des Baumes mittels Rekursion.
         """
         if node is not self._sentinal:
-            self.postorderRecursiv(node._left)
-            self.postorderRecursiv(node._right)
+            self.postorderRecursive(node._left)
+            self.postorderRecursive(node._right)
             self.printnode(node)
 
-    def preorderIterativ(self):
-        """Traverse tree in preorder iterative.
+    def preorderIterative(self):
+        """Traverse the tree postorder iterative.
+
 
         Preorder Traversierung des Baumes mittels Iteration und eines Stacks.
         """
@@ -181,8 +182,8 @@ class Tree:
             if n._left is not self._sentinal:
                 stack.append(n._left)
 
-    def inorderIterativ(self):
-        """Traverse tree in inorder iterative.
+    def inorderIterative(self):
+        """Traverse tree inorder iterative.
 
         Inorder Traversierung des Baumes mittels Iteration und eines Stacks.
         """
@@ -202,8 +203,8 @@ class Tree:
                 stack.append(n)
                 n = n._left
 
-    def postorderIterativ(self):
-        """Traverse tree in postorder iterative.
+    def postorderIterative(self):
+        """Traverse tree postorder iterative.
 
         Postorder Traversierung des Baumes mittels Iteration und eines Stacks.
         """
@@ -235,8 +236,8 @@ class Tree:
             if not stack:
                 done = True
 
-    def levelorderIterativ(self):
-        """Traverse tree in levelorder iterative.
+    def levelorderIterative(self):
+        """Traverse tree levelorder iterative.
 
         Inorder Traversierung des Baumes mittels Iteration und eines Stacks.
         """
@@ -286,21 +287,21 @@ def main():
 
     print("\nRekursive Traversierung:")
     print("Preorder:")
-    tree.preorderRecursiv(tree._head._right)
+    tree.preorderRecursive(tree._head._right)
     print("\nInorder:")
-    tree.inorderRecursiv(tree._head._right)
+    tree.inorderRecursive(tree._head._right)
     print("\nPostorder:")
-    tree.postorderRecursiv(tree._head._right)
+    tree.postorderRecursive(tree._head._right)
 
     print("\n\nIterative Traversierung:")
     print("Preorder:")
-    tree.preorderIterativ()
+    tree.preorderIterative()
     print("\nInorder:")
-    tree.inorderIterativ()
+    tree.inorderIterative()
     print("\nPostorder:")
-    tree.postorderIterativ()
+    tree.postorderIterative()
     print("\nLevelorder:")
-    tree.levelorderIterativ()
+    tree.levelorderIterative()
 
     print("")
 
