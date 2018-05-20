@@ -69,13 +69,17 @@ class AbstractLinearList(ABC):
 # -----------------------------------------------------------------------
 class LinearList(AbstractLinearList):
 
-    def __init__(self):
-        self._head = Node()
-        self._tail = Node()
+    def __init__(self, node=Node):
+        self.__nodetype = node
+        self._head = node()
+        self._tail = node()
         self._head._next = self._tail
         self._head._key = -1
         self._tail._key = -1
         self._tail._next = self._tail
+
+    def __createNode(self):
+        return self.__nodetype()
 
     def __repr__(self):
         t = self._head._next
@@ -97,11 +101,14 @@ class LinearList(AbstractLinearList):
         return(rs)
 
     def insertafter(self, node, value):
-        newNode = Node()
+        newNode = self.__createNode()
         newNode._key = value
         newNode._next = node._next
         node._next = newNode
         return newNode
+
+    def insert(self, value):
+        return self.insertafter(self._head, value)
 
     def deletenext(self, node):
         t = node._next
@@ -120,6 +127,10 @@ class LinearList(AbstractLinearList):
         while (node._key != key):
             node = node._next
         return node
+
+    def find(self, key):
+        t = self.search(self._head, key)
+        return t if t is not self._tail else None
 
     def isempty(self):
         return self._head._next == self._tail

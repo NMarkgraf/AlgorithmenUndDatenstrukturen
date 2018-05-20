@@ -29,8 +29,8 @@ class UPNcalc:
             c = readchar.readchar()
             flag = True
 
-            while (c in ["0", "1", "2", "3", "4", "5",
-                         "6", "7", "8", "9", "."]):
+            while (c in ["0", "1", "2", "3", "4",
+                         "5", "6", "7", "8", "9", "."]):
                 print(c, end='', flush=True)
                 n += 1
                 if (c == "."):
