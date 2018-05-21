@@ -167,7 +167,6 @@ class Tree:
     def preorderIterative(self):
         """Traverse the tree postorder iterative.
 
-
         Preorder Traversierung des Baumes mittels Iteration und eines Stacks.
         """
         stack = []  # Wir benutzen den Python eigenen Stack: eine Liste.
@@ -261,10 +260,91 @@ class Tree:
         """
         print(str(node), end=" ", flush=True)
 
+    def __deleteLeaf(self, leaf):
+        """Deleate leaf.
+
+        Lösche das Blatt/Knoten in dem man es durch das linke Kind ersetzt.
+        """
+        leaf = leaf._left
+        return leaf
+
+    def __deleteNodeWithLeaf(self, node):
+        """Delete node with leaf.
+
+        Lösche einen Knoten mit einem Blatt als Kind.
+        """
+        t = node
+        node = node._right
+        node._left = t._left
+        return node
+
+    def __deleteBySubstitution(self, node, dnode):
+        """Delete node by substitution.
+
+        Lösche den Knoten `dnote` durch Substituion.
+        """
+        n = node._right
+        while n._left._left is not self._sentinal:
+            n = n._left
+        node = n._left
+        n._left = node._right
+        node._left = dnode._left
+        node._right = dnode._right
+        return node
+
+    def delete(self, key):
+        """Delete node by key.
+
+        Lösche einen Knoten mit dem angegebenen Schlüssel.
+
+        Es gibt dazu drei Fälle zu unterscheiden:
+        1. Der zu löschende Knoten ist ein Blatt
+        """
+        # Beginne an der Wurzel
+        p = self._head  # Knoten über der Wurzel
+        n = self._head._right  # Der Wurzelknoten
+        # Bereite eine Suche vor (mit Sentinaltechnik)
+        self._sentinal._key = key
+        # Suche nach dem Knoten, welche gelöscht werden soll
+        while key != n._key:
+            p = n  # Knoten aus dem ein Kind gelöscht wird
+            n = n._left if (key < n._key) else n._right
+        t = n  # t ist nun der zu löschende Knoten
+
+        if t._right is self._sentinal:
+            # Lösche einen Knoten, der keine rechten Kindknoten mehr hat.
+            n = self.__deleteLeaf(n)
+        else:
+            # Es gibt einen rechten Kindknoten ...
+            if t._right._left is self._sentinal:
+                # ... aber der hat keinen linken Kindknoten!
+                n = self.__deleteNodeWithLeaf(n)
+            else:
+                # ... und der hat einen linken Kindknoten!
+                n = self.__deleteBySubstitution(n, t)
+        if key < p._key:
+            p._left = n
+        else:
+            p._right = n
+
 # ============================================================================
 
 
 def main():
+    """Hauptprogramm.
+
+    Wir bauen einen kleinen Baum auf und traversieren diesen mit den
+    verschiedenen implementierten Methoden.
+
+    Der folgende Baum wird zunächst aufgebaut:
+
+                 [20]
+
+        [10]               [30]
+
+    [ 5]    [15]       [25]    [35]
+
+    """
     tree = Tree()
     tree.insert(20, "20")
     tree.insert(10, "10")
@@ -273,17 +353,6 @@ def main():
     tree.insert(30, "30")
     tree.insert(25, "25")
     tree.insert(35, "35")
-
-    '''
-    Der aufgebaute Baum:
-
-                 [20]
-
-        [10]               [30]
-
-    [ 5]    [15]       [25]    [35]
-
-    '''
 
     print("\nRekursive Traversierung:")
     print("Preorder:")
@@ -306,11 +375,45 @@ def main():
     print("")
 
 
+def testZwei():
+    tree = Tree()
+    tree.insert(20, "20")
+    tree.insert(10, "10")
+    tree.insert(5, "5")
+    tree.insert(15, "15")
+    tree.insert(30, "30")
+    tree.insert(25, "25")
+    tree.insert(35, "35")
+
+    tree.inorderIterative()
+    print("")
+    tree.preorderIterative()
+
+    print("\nLösche das Blatt 35:")
+    tree.delete(35)
+    tree.inorderIterative()
+    print("")
+    tree.preorderIterative()
+    print("")
+    print("\nLösche das Blatt 10:")
+    tree.delete(10)
+    tree.inorderIterative()
+    print("")
+    tree.preorderIterative()
+    print("")
+    print("\nLösche das Blatt 20:")
+    tree.delete(20)
+    tree.inorderIterative()
+    print("")
+    tree.preorderIterative()
+    print("")
+
+
 def test():
     from random import randint
 
     tree = Tree()
-    n = 1000
+    n = 10
 
     list = [0] * n
     for i in range(0, n):
@@ -328,3 +431,4 @@ def test():
 if __name__ == "__main__":
     main()
     # test()
+    # testZwei()
