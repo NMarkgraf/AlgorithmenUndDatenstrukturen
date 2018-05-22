@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 '''
 
@@ -37,6 +36,25 @@ def ackermann2(m, n):
     return n + 1
     
 
+def ackermannIterative(m, n):
+    stack = []
+    stack.append(m)
+    while stack:
+        m = stack.pop()
+        if m == 0:
+            n += m+1
+        else:
+            if n == 0:
+                n = 1
+                m = m - 1
+                stack.append(m)
+            else:
+                stack.append(m-1)
+                stack.append(m)
+                n -= 1
+    return n
+
+
 def sudan(n, x, y):
     """Sudanfunktion.
     
@@ -50,6 +68,6 @@ def sudan(n, x, y):
         else:
             return sudan(n-1, sudan(n,x, y-1), sudan(n,x,y-1) + y)
 
-print(ackermann(2, 500))
+print(ackermannIterative(4, 1))
 
 #print(sudan(2,2,2))
