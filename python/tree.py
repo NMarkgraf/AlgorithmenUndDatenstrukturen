@@ -66,14 +66,12 @@ class Tree:
       else:
         x = x._right
     return x._info
-
     
   def inorderRecursiv(self, node):
     if node != self._sentinal:
       self.inorderRecursiv(node._left)
       self.printnode(node)
       self.inorderRecursiv(node._right)
-
 
   def preorderRecursiv(self, node):
     if node != self._sentinal:
@@ -87,7 +85,7 @@ class Tree:
       self.postorderRecursiv(node._right)
       self.printnode(node)
 
-      
+
   def printnode(self, node):
     print("["+str(node._key)+": "+str(node._info), end="] " ,flush=True)
     
@@ -105,6 +103,7 @@ def main():
   tree.inorderRecursiv(tree._head._right)
   print("\nPostorder:")
   tree.postorderRecursiv(tree._head._right)
+
 
 if __name__ == "__main__":
     main()
