@@ -1,4 +1,5 @@
 '''
+
 Algorithmen und Datenstrukturen in Python
 =========================================
 
@@ -10,7 +11,8 @@ Primzahlsiebe:
     (vgl: https://de.wikipedia.org/wiki/Sieb_des_Eratosthenes)
 
 2. Sieb von Sudaram
-    (vgl: https://en.wikipedia.org/wiki/Sieve_of_Sundaram oder http://lebendom.com/article/sieb-von-sundaram)
+    (vgl:   https://en.wikipedia.org/wiki/Sieve_of_Sundaram oder
+            http://lebendom.com/article/sieb-von-sundaram)
 
 
 '''
@@ -21,7 +23,7 @@ import timeit
 
 
 def eratosthenes(n):
-    """ Das Sieb des Eratosthenes
+    """Das Sieb des Eratosthenes.
 
     Erzeugt eine Liste von Primzahlen bis zur Obergrenze *n*
 
@@ -42,9 +44,11 @@ def eratosthenes(n):
             r.append(i)
     return r
 
+# ============================================================================
+
 
 def sundaram(n):
-    """ Sieb von Sundaram
+    """Das Sieb von Sundaram.
 
     Erzeugt eine Liste von Primzahlen bis zur Obergrenze *n*
 
@@ -57,7 +61,7 @@ def sundaram(n):
         idx = i+j+2*i*j
         while (idx < nn):
             s.discard(idx)
-            j=j+1
+            j += 1
             idx = i+j+2*i*j
     r = [2]
     for i in range(1, nn):
@@ -65,13 +69,20 @@ def sundaram(n):
             r.append(2*i+1)
     return r
 
+# ============================================================================
+
 
 def main():
+    """Hauptroutine
+
+    Berechne die ersten n Primzahlen mit dem Sieb des Eratosthenes, oder
+    mit Hilfe des Siebs von Sudaram ("-s" als Option).
+    """
     t = -1
     if len(sys.argv) == 2:
         n = int(sys.argv[1])
         t = 0
-    else: 
+    else:
         if len(sys.argv) == 3:
             n = int(sys.argv[2])
             t = (sys.argv[1] == "-s")

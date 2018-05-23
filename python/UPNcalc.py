@@ -1,4 +1,5 @@
 '''
+
 Algorithmen und Datenstrukturen in Python
 =========================================
 
@@ -11,14 +12,14 @@ Einfacher UPN Taschenrechner mit Stack
 from lists import Stack
 import readchar
 
+
 class UPNcalc:
 
-    stack = Stack()
-    
+    stack = Stack()  # Unser eigener Stack aus lists!
+
     def __init__(self):
-      self.base = 10
-      
-      
+        self.base = 10
+
     def main(self):
         while (True):
             x = 0
@@ -27,8 +28,9 @@ class UPNcalc:
             m = 0
             c = readchar.readchar()
             flag = True
-            
-            while (c in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."]):
+
+            while (c in ["0", "1", "2", "3", "4",
+                         "5", "6", "7", "8", "9", "."]):
                 print(c, end='', flush=True)
                 n += 1
                 if (c == "."):
@@ -38,15 +40,15 @@ class UPNcalc:
                         x = x * self.base + int(c)
                     else:
                         m += 1
-                        y += y * self.base + int(c) 
+                        y = y * self.base + int(c)
                 c = readchar.readchar()
-                
+
             if (n > 0):
                 print(" ", end="", flush=True)
                 if (m > 0):
                     x += y / (10**m)
                 self.stack.push(x)
-                
+
             if (c == "+"):
                 print("+ ", end='', flush=True)
                 self.stack.push(self.stack.pop() + self.stack.pop())
@@ -57,7 +59,7 @@ class UPNcalc:
                     self.stack.push(self.stack.pop() - t)
                 else:
                     if (c == "*"):
-                        print("* " , end='', flush=True)
+                        print("* ", end='', flush=True)
                         self.stack.push(self.stack.pop() * self.stack.pop())
                     else:
                         if (c == "/"):
@@ -72,12 +74,12 @@ class UPNcalc:
             if (c in ['\x0d', '\x0a']):
                 break
         print("= " + str(self.stack.pop()))
-   
-     
+
+
 def main():
     calculator = UPNcalc()
     calculator.main()
-   
-   
+
+
 if __name__ == "__main__":
     main()

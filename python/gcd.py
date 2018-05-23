@@ -1,4 +1,5 @@
 '''
+
 Algorithmen und Datenstrukturen in Python
 =========================================
 
@@ -10,10 +11,11 @@ zweier Zahlen.
 '''
 import sys
 
-def gcd_simple(u, v):
-    """ (Einfacher) Euklidscher Algorithmus
 
-    Euklidischer Algorithmus zu Bestimmung des größten gemeinstamen 
+def gcd_simple(u, v):
+    """(Einfacher) Euklidscher Algorithmus.
+
+    Euklidischer Algorithmus zu Bestimmung des größten gemeinstamen
     Teilers (ggT) mit Hilfe einer einfacher Subtraktion.
 
     :param u: ein Integerwert
@@ -28,9 +30,9 @@ def gcd_simple(u, v):
 
 
 def gcd(u, v):
-    """ Euklidscher Algorithmus
+    """Euklidscher Algorithmus.
 
-    Euklidischer Algorithmus zu Bestimmung des größten gemeinstamen 
+    Euklidischer Algorithmus zu Bestimmung des größten gemeinstamen
     Teilers (ggT) mit Hilfe der Modulorechnung.
 
     :param u: ein Integerwert
