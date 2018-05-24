@@ -11,17 +11,17 @@ Rekursive und iterative Berechnung der n-ten Fibonacci-Zahl.
 '''
 
 
-def fibRec(n):
+def fibRec(n: int) -> int:
     """Rekursive Funktion zur Berechnung der *n*-ten Fibonacci-Zahl.
 
     :param: n
     """
     if n < 2:
         return 1
-    return fibRec(n-1) + fibRec(n-2)
+    return fibRec(n - 1) + fibRec(n - 2)
 
 
-def fibIter(n):
+def fibIter(n: int) -> int:
     """Iterative Funktion zur Berechnung der *n*-ten Fibonacci-Zahl.
 
     :param: n
@@ -41,6 +41,7 @@ def main(fib, n):
 
 if __name__ == "__main__":
     import argparse
+
     parser = argparse.ArgumentParser()
     parser.add_argument("-r", "--recursive", help="Rekursiver Fibonacci",
                         action="store_true")
