@@ -327,9 +327,7 @@ class Tree:
         else:
             p._right = n
 
-# ============================================================================
-
-
+    
 def main():
     """Hauptprogramm.
 
@@ -426,6 +424,7 @@ def test():
     print("")
     tree.inorderRecursiv(tree._head._right)
     print("")
+
 
 
 if __name__ == "__main__":
