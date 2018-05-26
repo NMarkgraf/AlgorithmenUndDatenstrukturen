@@ -15,16 +15,16 @@ import sys
 def gcd_simple(u, v):
     """(Einfacher) Euklidscher Algorithmus.
 
-    Euklidischer Algorithmus zu Bestimmung des größten gemeinstamen
+    Euklidischer Algorithmus zu Bestimmung des größten gemeinsamen
     Teilers (ggT) mit Hilfe einer einfacher Subtraktion.
 
     :param u: ein Integerwert
     :param v: ein Integerwert
     :return: der größte gemeinsame Teiler von u und v
     """
-    while (u > 0):
-        if (v > u):
-            u, v = v, u
+    while u > 0:
+        if v > u:
+            u, v = v, u  # tausche u und v
         u = u - v
     return v
 
@@ -32,16 +32,16 @@ def gcd_simple(u, v):
 def gcd(u, v):
     """Euklidscher Algorithmus.
 
-    Euklidischer Algorithmus zu Bestimmung des größten gemeinstamen
+    Euklidischer Algorithmus zu Bestimmung des größten gemeinsamen
     Teilers (ggT) mit Hilfe der Modulorechnung.
 
     :param u: ein Integerwert
     :param v: ein Integerwert
     :return: der größte gemeinsame Teiler von u und v
     """
-    while (u > 0):
-        if (v > u):
-            u, v = v, u
+    while u > 0:
+        if v > u:
+            u, v = v, u  # tausche u und v
         u %= v
     return v
 
@@ -51,7 +51,7 @@ def main():
         u = int(sys.argv[1])
         v = int(sys.argv[2])
         ggT = gcd(u, v)
-        print("ggT("+str(u)+", "+str(v)+") = "+str(ggT))
+        print("ggT(" + str(u) + ", " + str(v) + ") = " + str(ggT))
     else:
         print("usage: python gcd.py u v")
 

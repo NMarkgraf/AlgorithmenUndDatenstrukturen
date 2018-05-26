@@ -12,7 +12,7 @@ machen wir davon weitgehend keinen Gebrauch!
 
 *Node* ist unsere Klasse für unsere Datenknoten
 
-*LinearList* ist unsere Basisklasse für die Lineare Liste, von Ihr werden
+*LinearList* ist unsere Basisklasse für die lineare Liste, von Ihr werden
 
 *Stack* für einen Stack / Stapelspeicher und
 
@@ -84,7 +84,7 @@ class LinearList(AbstractLinearList):
     def __repr__(self):
         t = self._head._next
         rs = ""
-        while (t._next != t):
+        while t._next != t:
             rs += repr(t) + " "
             t = t._next
 
@@ -93,7 +93,7 @@ class LinearList(AbstractLinearList):
     def __str__(self):
         t = self._head._next
         rs = "["
-        while (t._next != t):
+        while t._next != t:
             rs += str(t) + ", "
             t = t._next
 
@@ -124,7 +124,7 @@ class LinearList(AbstractLinearList):
            Suche mit Sentinaltechnik
         """
         self._tail._key = key
-        while (node._key != key):
+        while node._key != key:
             node = node._next
         return node
 
@@ -150,7 +150,7 @@ class SortedLinearList(LinearList):
 
     def search(self, node, key):
         self._tail._key = key
-        while (node._next._key < key):
+        while node._next._key < key:
             node = node._next
         return node
 
@@ -181,7 +181,7 @@ class Queue(LinearList):
 
     def put(self, key):
         t = self._head
-        while (t._next != self._tail):
+        while t._next != self._tail:
             t = t._next
         self.insertafter(t, key)
 
@@ -225,7 +225,7 @@ class Ring(LinearList):
             newnode._next = newnode
 
     def searchnext(self, node, key):
-        while (node._next._key != key):
+        while node._next._key != key:
             node = node._next
             if node._next == self._head._next:
                 break
