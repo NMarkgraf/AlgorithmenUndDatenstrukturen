@@ -21,7 +21,7 @@ def fib_recursive(n: int) -> int:
     return fib_recursive(n-1) + fib_recursive(n-2)
 
 
-def fib_iterative(n):
+def fib_iterative(n: int) -> int:
     """Iterative Funktion zur Berechnung der *n*-ten Fibonacci-Zahl.
 
     :param: n

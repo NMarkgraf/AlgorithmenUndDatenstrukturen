@@ -47,10 +47,29 @@ class Sorter(ABC):
         self.sort(testfeld)
         print(testfeld)
 
+    def __test_random_multi(self):
+        from random import randint, seed
+        seed(2009)
+        n = 30  # Feldgröße
+        max_value = 2*n  # Maximaler Wert im Feld (0..max_value)
+        testfeld = [0] * n
+        for i in range(n):
+            testfeld[i] = randint(0, max_value)
+
+        print(testfeld)
+        self.sort_multitasking(testfeld)
+        print(testfeld)
+
+
     def test(self):
         print(self)
         # self.__test_simple()
         self.__test_random()
+
+    def test_multitasking(self):
+        print(self," multitasking",)
+        # self.__test_simple()
+        self.__test_random_multi()
 
 # ============================================================================
 
@@ -147,9 +166,47 @@ class CocktailSort(Sorter):
         super().__init__()
         self._name = "Cocktailsort"
 
+    def __bubble_up(self, feld, l, r):
+        swapped = False
+        for i in range(l, r):
+            if feld[i] > feld[i + 1]:
+                feld[i], feld[i + 1] = feld[i + 1], feld[i]
+                swapped = True
+        return swapped
+        
+    def __bubble_down(self, feld, l, r):
+        swapped = False
+        for i in range(l, r, -1):
+            if feld[i] < feld[i - 1]:
+                feld[i], feld[i - 1] = feld[i - 1], feld[i]
+                swapped = True
+        return swapped
+        
+    def __split(self, feld, l, r):
+        q = int((r-l+1) / 2)
+        for i in range(l+q, r): 
+            # do parallel: 
+            if feld[i-q] > feld[i]:
+                feld[i], feld[i - q] = feld[i - q], feld[i]
+        return r-q
+
+    def sort_multitasking(self, feld):
+        l = 0
+        r = len(feld)
+        while l < r:
+            q = self.__split(feld, l, r)
+            # do parallel:
+            self.__bubble_down(feld, q, l)
+            l += 1
+            r -= 1
+            self.__bubble_up(feld, q, r)
+
     def sort(self, feld):
         for k in range(len(feld) - 1, 0, -1):
             swapped = False
+            swapped += self.__bubble_down(feld, k, 0)
+            swapped += self.__bubble_up(feld, 0, k)
+            """
             for i in range(k, 0, -1):
                 if feld[i] < feld[i - 1]:
                     feld[i], feld[i - 1] = feld[i - 1], feld[i]
@@ -159,7 +216,7 @@ class CocktailSort(Sorter):
                 if feld[i] > feld[i + 1]:
                     feld[i], feld[i + 1] = feld[i + 1], feld[i]
                     swapped = True
-
+            """
             if not swapped:
                 return feld
 
@@ -267,6 +324,7 @@ def main():
 
     cocktailsort = CocktailSort()
     cocktailsort.test()
+    cocktailsort.test_multitasking()
 
     shellsort = ShellSort()
     shellsort.test()
