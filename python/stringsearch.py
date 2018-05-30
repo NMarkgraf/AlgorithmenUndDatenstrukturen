@@ -29,21 +29,98 @@ def brute_force(pat: str, txt: str) -> int:
     """
     m = len(pat)
     n = len(txt)
-    for i in range(0, 1+n-m):
-        j = 0
+
+    for i in range(0, n-m+1):
+        j = 0  # Anzahl der erkanten Zeichen des Suchmusters
         while j < m:
             if txt[i+j] != pat[j]:
                 break
             j += 1
-        if j == m:
+        if j == m:  # Suchmuster gefunden!
             return i
-
     return -1
 
 # ============================================================================
 
 
+def brute_force_sentinal(pat: str, txt: str) -> int:
+    """Rohe Gewalt (mit Sentinaltechnik).
+
+    Anzahl der Operationen:
+
+     Garantiert  |  Typisch
+    -------------+-----------
+     M * N       | 1,1 * N
+
+    Zusatzspeicher: 1
+
+
+    :param pat: Suchmuster
+    :param txt: Text in dem gesucht werden soll
+    :return: Findeposition oder -1, wenn nicht vorhanden.
+    """
+    m = len(pat)
+    n = len(txt)
+
+    a = txt + pat  # Sentinal am Ende anhängen!
+
+    i = 0
+    while True:
+        j = 0
+        while j < m:
+            if a[i+j] != pat[j]:
+                break
+            j += 1
+        if j == m:  # Suchmuster gefunden!
+            if i < n:  # Suchstelle gefunden!
+                return i
+            else:  # Sentinal gefunden!
+                return -1
+        i += 1
+
+# ============================================================================
+
+
 def knuth_morris_pratt(pat: str, txt: str) -> int:
+
+    def init_next(pat: str):
+        next = [-1 for col in range(0, len(pat)+1)]
+        i = 0
+        j = -1
+        m = len(pat)
+        next[0] = -1
+        while i < m:
+            while j >= 0and pat[i] != pat[j]:
+                j = next[j]
+            i += 1
+            j += 1
+            next[i] = j
+        return next
+
+    next = init_next(pat)
+    m = len(pat)
+    n = len(txt)
+
+    a = txt + pat  # Sentinal anhängen
+
+    i = 0
+    j = 0
+
+    while j < m:
+        while j >= 0 and a[i] != pat[j]:
+            j = next[j]
+        i += 1
+        j += 1
+
+    if i-m < n:
+        return i-m  # Suchstelle gefunden!
+    else:
+        return -1  # Sentinal gefunden!
+
+# ============================================================================
+
+
+def knuth_morris_pratt_dfa(pat: str, txt: str) -> int:
     """Algorithmus von Knuth Morris und Pratt.
 
     Anzahl der Operationen:
@@ -136,7 +213,7 @@ def boyer_moore(pat: str, txt: str) -> int:
                 if skip < 1:
                     skip = 1
                 break
-            j -=1
+            j -= 1
         if skip == 0:
             return i
         i += skip
@@ -163,22 +240,21 @@ def rabin_karp(pat: str, txt: str) -> int:
     """
 
     q = 8388593  # Primzahl / Modulus
-    r = 256
+    r = 256  # Größe des Zeichenbereichs (ASCII = 256, Unicode 65535 (?))
 
-    def get_inv(r: int, q: int, m: int) -> int:
+    def get_pot(r: int, q: int, m: int) -> int:
         """Erzeuge ein inverses Element.
 
-            $inv = r^(m-1) mod q$
+            $pot = r^(m-1) mod q$
 
         :param r: Größe des Zeichenbereichs (ASCII=256)
         :param q: (Primzahl-)Modulus
         :param m: Länge des Suchmusters
         """
-        inv = 1
+        pot = 1
         for i in range(1,m):
-            inv = (inv * r) % q
-        return inv
-
+            pot = (pot * r) % q
+        return pot
 
     def check(pat: str, ctxt: str):
         """Prüfe ob pat wirklich gleich ctxt ist.
@@ -189,11 +265,13 @@ def rabin_karp(pat: str, txt: str) -> int:
         """
         # Monte Carlo: einfach nur TRUE liefern!
         return True
-        # Las Vegas: Wirklich testen!
-        # return pat == ctxt
+        # "Las Vegas": Wirklich testen!
+        # for i in range(0, len(pat)):
+        #   if pat[i] != ctxt[i]:
+        #       return false
+        # return true
 
-
-    def hash(key: str, r: int, q: int) -> int:
+    def hash_fkt(key: str, r: int, q: int) -> int:
         """Hashfunktion.
 
         :param key: Schlüssel
@@ -208,17 +286,17 @@ def rabin_karp(pat: str, txt: str) -> int:
 
     n = len(txt)
     m = len(pat)
-    inv = get_inv(r, q, m)
+    pot = get_pot(r, q, m)
 
-    pat_hash = hash(pat, r, q)
-    txt_hash = hash(txt[0:m], r, q)
+    pat_hash = hash_fkt(pat, r, q)
+    txt_hash = hash_fkt(txt[0:m], r, q)
 
     i = m
     while i < n:
         if pat_hash == txt_hash:
             if check(pat, txt[i-m:i]):
                 return i-m
-        txt_hash = (txt_hash + q - (inv*ord(txt[i-m]) % q)) % q
+        txt_hash = (txt_hash + q - (pot * ord(txt[i-m]) % q)) % q
         txt_hash = (txt_hash * r + ord(txt[i])) % q
         i += 1
     return -1
@@ -228,10 +306,12 @@ def main():
     txt = "Das ist ein einfacher Text um zu Testen ob die Teilstringsuche funktioniert."
     pat = "Teil"
     
-    print("Bruce force       :\t", brute_force(pat, txt))
-    print("Knuth-Morris-Pratt:\t", knuth_morris_pratt(pat, txt))
-    print("Boyer-Moore       :\t", boyer_moore(pat, txt))
-    print("Rabin-Karp        :\t", rabin_karp(pat, txt))
+    print("Bruce force             :\t", brute_force(pat, txt))
+    print("Bruce force   (Sentinal):\t", brute_force_sentinal(pat, txt))
+    print("Knuth-Morris-Pratt      :\t", knuth_morris_pratt(pat, txt))
+    print("Knuth-Morris-Pratt (dfa):\t", knuth_morris_pratt_dfa(pat, txt))
+    print("Boyer-Moore             :\t", boyer_moore(pat, txt))
+    print("Rabin-Karp              :\t", rabin_karp(pat, txt))
 
 if __name__ == "__main__":
     main()
