@@ -49,5 +49,4 @@ if __name__ == "__main__":
                         action="store_true")
     parser.add_argument("n", help="n", type=int)
     args = parser.parse_args()
-    fib = fib_recursive if args.recursive else fib_iterative if args.iterative else fib_recursive
-    main(fib, args.n)
+    main(fib_recursive if args.recursive else fib_iterative, args.n)

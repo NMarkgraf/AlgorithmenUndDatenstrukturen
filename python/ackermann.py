@@ -11,7 +11,7 @@ Ackermannfunktion und Sudanfunktion
 '''
 
 def ackermann(m, n):
-    """Ackermannfunktion.
+    """Ackermannfunktion rekursiv.
     
     Definition nach Rózsa Péter. vgl. https://de.wikipedia.org/wiki/Ackermannfunktion
     """
@@ -38,12 +38,13 @@ def ackermann2(m, n):
 a={}
     
 def memo(m, n):
-  if m == 0:
-      return n+1
-  if (m, n) in a:
-      return a[(m, n)]
-  else:
-      return None
+    global a
+    if m == 0:
+        return n+1
+    if m in a and n in a[m]
+        return a[(m, n)]
+    else:
+        return None
     
     
 def ackermannMemo(m, n):
@@ -53,7 +54,7 @@ def ackermannMemo(m, n):
         return n + 1
     else:
         if n == 0:
-            if (m-1, 1) not in a:
+            if (m-1) not in a, 1) not in a:
               a[(m-1, 1)] = ackermannMemo(m-1, 1)
             return a[(m-1, 1)]
         else:
