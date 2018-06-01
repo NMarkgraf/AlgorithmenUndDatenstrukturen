@@ -219,11 +219,62 @@ def boyer_moore(pat: str, txt: str) -> int:
         i += skip
 
     return -1
+# ============================================================================
+
+
+def boyer_moore_sentinal(pat: str, txt: str) -> int:
+    """Algorithmus von Boyer und Moore.
+
+    Anzahl der Operationen:
+
+     Garantiert  |  Typisch
+    -------------+-----------
+     3 * N       | N / M
+
+    Zusatzspeicher: R
+
+    :param pat: Suchmuster
+    :param txt: Text in dem gesucht werden soll
+    :return: Findeposition oder -1, wenn nicht vorhanden.
+    """
+    def create_right(pat: str):
+        """Erzeuge Sprungtabelle.
+
+        :param pat: Suchmuster
+        """
+        m = len(pat)
+        r = 256
+        right = [-1 for col in range(0, r+1)]
+        for j in range(0, m):
+            right[ord(pat[j])] = j
+        return right
+
+    right = create_right(pat)
+    a = txt + pat  # Sentinal!
+    n = len(txt)
+    m = len(pat)
+    i = -1
+    skip = 1
+    while skip!=0:
+        i += skip
+        skip = 0
+        j = m-1
+        while j >= 0:
+            if pat[j] != a[i+j]:
+                skip = j - right[ord(a[i+j])]
+                if skip < 1:
+                    skip = 1
+                break
+            j -= 1
+    if i < n:
+        return i
+    else:
+        return -1
 
 # ============================================================================
 
 
-def rabin_karp(pat: str, txt: str) -> int:
+def rabin_karp(pat: str, txt: str, monte_carlo: bool=True) -> int:
     """Algorithmus von Rabin Karp (Fingerprint-Algorithmus).
 
     Anzahl der Operationen:
@@ -256,7 +307,7 @@ def rabin_karp(pat: str, txt: str) -> int:
             pot = (pot * r) % q
         return pot
 
-    def check(pat: str, ctxt: str):
+    def check_monte_carlo(pat: str, ctxt: str):
         """Prüfe ob pat wirklich gleich ctxt ist.
 
         :param pat: Suchmuster
@@ -265,11 +316,20 @@ def rabin_karp(pat: str, txt: str) -> int:
         """
         # Monte Carlo: einfach nur TRUE liefern!
         return True
+
+    def check_las_vegas(pat: str, ctxt: str):
+        """Prüfe ob pat wirklich gleich ctxt ist.
+
+        :param pat: Suchmuster
+        :param ctxt: Textausschnitt
+        :return: TRUE falls gleich, sonst FALSE
+        """
         # "Las Vegas": Wirklich testen!
-        # for i in range(0, len(pat)):
-        #   if pat[i] != ctxt[i]:
-        #       return false
-        # return true
+        for i in range(0, len(pat)):
+          if pat[i] != ctxt[i]:
+              return False
+        return True
+
 
     def hash_fkt(key: str, r: int, q: int) -> int:
         """Hashfunktion.
@@ -284,6 +344,12 @@ def rabin_karp(pat: str, txt: str) -> int:
             h = (h * r + ord(key[i])) % q
         return h
 
+
+    if monte_carlo:
+        check = check_monte_carlo
+    else:
+        check = check_las_vegas
+
     n = len(txt)
     m = len(pat)
     pot = get_pot(r, q, m)
@@ -296,22 +362,68 @@ def rabin_karp(pat: str, txt: str) -> int:
         if pat_hash == txt_hash:
             if check(pat, txt[i-m:i]):
                 return i-m
-        txt_hash = (txt_hash + q - (pot * ord(txt[i-m]) % q)) % q
-        txt_hash = (txt_hash * r + ord(txt[i])) % q
+        """ Variante 1:
+        txt_hash = (txt_hash + (q - (pot * ord(txt[i-m]) % q) % q) %q) % q
+        txt_hash = (((txt_hash * r) % q) + ord(txt[i])) % q
+        """
+        """Variante 2:
+        tmp = (pot * ord(txt[i-m])) % q
+        txt_hash = (txt_hash + q - tmp) % q
+        txt_hash = (txt_hash * r) % q
+        txt_hash = (txt_hash + ord(txt[i])) % q
+        """
+        """Variante 3:"""
+        tmp = (pot * ord(txt[i - m])) % q
+        if tmp > txt_hash:
+            txt_hash += q
+        txt_hash += tmp
+        txt_hash *= r
+        txt_hash %= q
+        txt_hash += ord(txt[i])
+        if txt_hash > q:
+            txt_hash -= q
         i += 1
     return -1
 
+def rabin_karp_las_vegas(pat: str, txt: str) -> int:
+    return rabin_karp(pat, txt, monte_carlo=False)
+
+def setup(pat="@norman_markgraf") -> str:
+    import urllib.request
+    webseite = "http://sefiroth.net/nab/"
+    t = urllib.request.urlopen(webseite)
+    return pat, t.read().decode("utf-8").encode("ascii", "ignore").decode("utf-8")
+
+def test(show_msg="", method=None, setup_routine=None):
+    import timeit
+    rep = 5
+    print(show_msg, end="", flush=True)
+    t = timeit.Timer(""+method+"(pat, txt)", setup="from __main__ import setup,"+method+"; pat, txt = setup();")
+    print("%8.7f" % (sum(t.repeat(rep, 100)) / rep))
+    print("", end="", flush=True)
 
 def main():
-    txt = "Das ist ein einfacher Text um zu Testen ob die Teilstringsuche funktioniert."
-    pat = "Teil"
-    
+    # txt = "Das ist ein einfacher Text um zu Testen ob die Teilstringsuche funktioniert."
+    pat = "Markgraf"
+
+    test("Bruce force             :\t", "brute_force", setup)
+    test("Bruce force   (Sentinal):\t", "brute_force_sentinal", setup)
+    test("Knuth-Morris-Pratt      :\t", "knuth_morris_pratt", setup)
+    test("Knuth-Morris-Pratt (dfa):\t", "knuth_morris_pratt_dfa", setup)
+    test("Boyer-Moore             :\t", "boyer_moore", setup)
+    test("Boyer-Moore   (Sentinal):\t", "boyer_moore_sentinal", setup)
+    test("Rabin-Karp (Monte Carlo):\t", "rabin_karp", setup)
+    test("Rabin-Karp   (Las Vegas):\t", "rabin_karp_las_vegas", setup)
+    """
     print("Bruce force             :\t", brute_force(pat, txt))
     print("Bruce force   (Sentinal):\t", brute_force_sentinal(pat, txt))
     print("Knuth-Morris-Pratt      :\t", knuth_morris_pratt(pat, txt))
     print("Knuth-Morris-Pratt (dfa):\t", knuth_morris_pratt_dfa(pat, txt))
     print("Boyer-Moore             :\t", boyer_moore(pat, txt))
-    print("Rabin-Karp              :\t", rabin_karp(pat, txt))
+    print("Boyer-Moore   (Sentinal):\t", boyer_moore_sentinal(pat, txt))
+    print("Rabin-Karp (Monte Carlo):\t", rabin_karp(pat, txt))
+    print("Rabin-Karp   (Las Vegas):\t", rabin_karp_las_vegas(pat, txt)
+    """
 
 if __name__ == "__main__":
     main()
