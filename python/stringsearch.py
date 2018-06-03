@@ -291,7 +291,10 @@ def rabin_karp(pat: str, txt: str, monte_carlo: bool=True) -> int:
     """
 
     q = 8388593  # Primzahl / Modulus
-    r = 256  # Größe des Zeichenbereichs (ASCII = 256, Unicode 65535 (?))
+    #q = 2 ** 31 -1  # 8. Mersenne-Primzahl zum Exponenten 31!
+                    # Damit ist mod q das selbe wie and q!
+    rn = 8
+    r = 1 <<  rn # =256  Größe des Zeichenbereichs (ASCII = 256, Unicode 65535 (?))
 
     def get_pot(r: int, q: int, m: int) -> int:
         """Erzeuge ein inverses Element.
@@ -303,8 +306,11 @@ def rabin_karp(pat: str, txt: str, monte_carlo: bool=True) -> int:
         :param m: Länge des Suchmusters
         """
         pot = 1
-        for i in range(1,m):
-            pot = (pot * r) % q
+        for i in range(1, m):
+            for j in range(0, 8):
+                pot <<= 1
+                if pot > q:
+                    pot -= q
         return pot
 
     def check_monte_carlo(pat: str, ctxt: str):
@@ -341,7 +347,13 @@ def rabin_karp(pat: str, txt: str, monte_carlo: bool=True) -> int:
         """
         h = 0
         for i in range(len(key)):
-            h = (h * r + ord(key[i])) % q
+            for j in range(0, rn):
+                h <<= 1
+                if h > q:
+                    h -= q
+            h += ord(key[i])
+            if h > q:
+                h -= q
         return h
 
 
@@ -372,13 +384,35 @@ def rabin_karp(pat: str, txt: str, monte_carlo: bool=True) -> int:
         txt_hash = (txt_hash * r) % q
         txt_hash = (txt_hash + ord(txt[i])) % q
         """
-        """Variante 3:"""
+        """Variante 3:
         tmp = (pot * ord(txt[i - m])) % q
         if tmp > txt_hash:
             txt_hash += q
-        txt_hash += tmp
+        txt_hash -= tmp
         txt_hash *= r
         txt_hash %= q
+        txt_hash += ord(txt[i])
+        """
+        """Variante 4: """
+        tmp = (pot * ord(txt[i - m])) % q
+        """
+        tmp, ptmp = 0, ord(txt[i - m])
+        while ptmp > 0:
+            if ptmp & 1 != 0:
+                tmp += pot
+            if tmp > q:
+                tmp -= q
+            ptmp >>= 1
+        """
+        if tmp > txt_hash:
+            txt_hash += q
+        txt_hash -= tmp
+        if txt_hash > q:
+            txt_hash -= q
+        for j in range(0, rn):
+            txt_hash = txt_hash << 1
+            if txt_hash > q:
+                txt_hash -= q
         txt_hash += ord(txt[i])
         if txt_hash > q:
             txt_hash -= q
@@ -399,7 +433,8 @@ def test(show_msg="", method=None, setup_routine=None):
     rep = 5
     print(show_msg, end="", flush=True)
     t = timeit.Timer(""+method+"(pat, txt)", setup="from __main__ import setup,"+method+"; pat, txt = setup();")
-    print("%8.7f" % (sum(t.repeat(rep, 100)) / rep))
+    # print("%8.7f" % (sum(t.repeat(rep, 100)) / rep))
+    print("%8.7f" % (min(t.repeat(rep, 20))))
     print("", end="", flush=True)
 
 def main():
