@@ -357,6 +357,28 @@ def rabin_karp(pat: str, txt: str, monte_carlo: bool=True) -> int:
         return h
 
 
+    def update_hash(old_hash: object, old_char: object, new_char: object, q: object, pot: object, rn: object) -> object:
+        """Aktualisiere den Hashwert.
+
+        :param old_hash: old hash
+        :param old_char: character to remove from hash (ord(txt[i - m])
+        :param new_char: character to add to hash (ord(txt[i]))
+        :return: new hash
+        """
+        new_hash = old_hash
+        tmp = (pot * old_char) % q
+        if tmp > new_hash:
+            new_hash += q
+        new_hash -= tmp
+        if new_hash > q:
+            new_hash -= q
+        new_hash = (new_hash << rn) % q
+        new_hash += new_char
+        if new_hash > q:
+            new_hash -= q
+        return new_hash
+
+
     if monte_carlo:
         check = check_monte_carlo
     else:
@@ -393,29 +415,7 @@ def rabin_karp(pat: str, txt: str, monte_carlo: bool=True) -> int:
         txt_hash %= q
         txt_hash += ord(txt[i])
         """
-        """Variante 4: """
-        tmp = (pot * ord(txt[i - m])) % q
-        """
-        tmp, ptmp = 0, ord(txt[i - m])
-        while ptmp > 0:
-            if ptmp & 1 != 0:
-                tmp += pot
-            if tmp > q:
-                tmp -= q
-            ptmp >>= 1
-        """
-        if tmp > txt_hash:
-            txt_hash += q
-        txt_hash -= tmp
-        if txt_hash > q:
-            txt_hash -= q
-        for j in range(0, rn):
-            txt_hash = txt_hash << 1
-            if txt_hash > q:
-                txt_hash -= q
-        txt_hash += ord(txt[i])
-        if txt_hash > q:
-            txt_hash -= q
+        txt_hash = update_hash(txt_hash, ord(txt[i - m]), ord(txt[i]), q, pot, rn)
         i += 1
     return -1
 
@@ -428,14 +428,23 @@ def setup(pat="@norman_markgraf") -> str:
     t = urllib.request.urlopen(webseite)
     return pat, t.read().decode("utf-8").encode("ascii", "ignore").decode("utf-8")
 
-def test(show_msg="", method=None, setup_routine=None):
+def timing_test(show_msg="", method=None, setup_routine=None):
     import timeit
     rep = 5
     print(show_msg, end="", flush=True)
-    t = timeit.Timer(""+method+"(pat, txt)", setup="from __main__ import setup,"+method+"; pat, txt = setup();")
+    t = timeit.Timer(""+method+"(pat, txt)", setup="from __main__ import setup,"+method+"; pat, txt = setup('norman');")
     # print("%8.7f" % (sum(t.repeat(rep, 100)) / rep))
     print("%8.7f" % (min(t.repeat(rep, 20))))
     print("", end="", flush=True)
+
+def correction_test(show_msg="", method=None):
+    print(show_msg, end="", flush=True)
+    pat, txt = setup()
+    print(eval(method+"(pat, txt)"))
+
+def test(show_msg="", method=None, setup_routine=None):
+    correction_test(show_msg, method)
+    timing_test(show_msg, method, setup_routine)
 
 def main():
     # txt = "Das ist ein einfacher Text um zu Testen ob die Teilstringsuche funktioniert."
