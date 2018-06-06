@@ -432,7 +432,7 @@ def timing_test(show_msg="", method=None, setup_routine=None):
     import timeit
     rep = 5
     print(show_msg, end="", flush=True)
-    t = timeit.Timer(""+method+"(pat, txt)", setup="from __main__ import setup,"+method+"; pat, txt = setup('norman');")
+    t = timeit.Timer(""+method+"(pat, txt)", setup="from __main__ import setup,"+method+"; pat, txt = setup();")
     # print("%8.7f" % (sum(t.repeat(rep, 100)) / rep))
     print("%8.7f" % (min(t.repeat(rep, 20))))
     print("", end="", flush=True)
