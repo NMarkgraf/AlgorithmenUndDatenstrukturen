@@ -24,7 +24,7 @@ def soundex_alt(txt: str) -> str:
     txtc = txt.upper()
     sndex = lc = txtc[0]
     cnt = 1
-    for i in range(2, len(txtc)):
+    for i in range(1, len(txtc)):
         c = txtc[i]
         if lc != c:
             if c in dic:
@@ -64,6 +64,12 @@ def main():
     wort = "Merkgrund"
     print(wort, "\t", soundex(wort))
     wort = "Merkstand"
+    print(wort, "\t", soundex(wort))
+    wort = "Marksand"
+    print(wort, "\t", soundex(wort))
+    wort = "Markquard"
+    print(wort, "\t", soundex(wort))
+    wort = "Markword"
     print(wort, "\t", soundex(wort))
 
 if __name__ =="__main__":
