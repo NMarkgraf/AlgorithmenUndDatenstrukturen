@@ -6,25 +6,29 @@ Algorithmen und Datenstrukturen in Python
 
 Implementierungen von Norman Markgraf aus dem Jahr 2018
 
-Einfaches Rot-13 für Großbuchstaben!
+Einfaches ROT-13 für Buchstaben.
 
 '''
 
+
 def rot(txt: str) -> str:
     result = ""
-    for c in txt.upper():
+    for c in txt:
         if c.isalpha():
             oc = ord(c)
-            if oc > ord("N"):
+            if c.upper() > "M":
                 oc -= 26
-            result += chr(oc+13)
+            result += chr(oc + 13)
         else:
             result += c
     return result
 
 def main():
     print(rot("Test!"))
-    print(rot("GRFG!"))
+    print(rot("Grfg!"))
+    txt = rot("Und es begab sich aber zu der Zeit, als ein Gespraech begann ueber den Sinn und den Unsinn von Statistik!")
+    print(txt)
+    print(rot(txt))
 
 if __name__ == "__main__":
     main()
